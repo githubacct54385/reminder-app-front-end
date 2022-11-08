@@ -1,7 +1,10 @@
 <template>
   <nav>
-    <router-link to="/">Home</router-link> | <router-link to="/about">About</router-link> |
-    <router-link to="/login">Login</router-link>
+    <router-link to="/">Home</router-link>
+    <router-link to="/about">About</router-link>
+    <router-link v-if="isAuthenticated" to="/reminders">Reminders</router-link>
+    <button class="cursor-pointer" v-if="isAuthenticated" @click="logoutAction">Logout</button>
+    <router-link v-else to="/login">Login</router-link>
   </nav>
   <router-view />
 </template>
@@ -24,7 +27,27 @@ nav a {
   color: #2c3e50;
 }
 
+nav a {
+  padding: 0 5px;
+}
+
 nav a.router-link-exact-active {
   color: #42b983;
 }
 </style>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import { useAuth0 } from "@auth0/auth0-vue";
+
+export default defineComponent({
+  setup() {
+    const { isAuthenticated, logout } = useAuth0();
+
+    return {
+      isAuthenticated,
+      logoutAction: () => logout(),
+    };
+  },
+});
+</script>

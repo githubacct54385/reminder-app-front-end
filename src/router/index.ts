@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import { authGuard } from "@auth0/auth0-vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -22,6 +23,12 @@ const routes: Array<RouteRecordRaw> = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "login" */ "../views/LoginView.vue"),
+  },
+  {
+    path: "/reminders",
+    name: "Reminders",
+    component: () => import(/* webpackChunkName: "reminders" */ "../views/RemindersView.vue"),
+    beforeEnter: authGuard,
   },
 ];
 

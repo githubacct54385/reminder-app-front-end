@@ -1,5 +1,5 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <h2>Reminder App is an application that sends reminders to yourself via SMS and Email</h2>
   </div>
 </template>
