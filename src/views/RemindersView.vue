@@ -75,6 +75,19 @@ interface Reminder {
   Content: string;
   IsCompleted: boolean;
 }
+
+/* eslint-disable */
+interface ReminderApi {
+  increment_id: string;
+  id: string;
+  creator_email: string;
+  creator_name: string;
+  due_date_utc: string;
+  content: string;
+  is_completed: boolean;
+}
+/* eslint-enable */
+
 const { getAccessTokenSilently, user } = useAuth0();
 
 const reminders = ref<Reminder[]>([]);
@@ -91,7 +104,7 @@ onMounted(async () => {
   });
   const remindersRes = await response.json();
   if (remindersRes.success) {
-    reminders.value = remindersRes.reminders.map((r: any) => {
+    reminders.value = remindersRes.reminders.map((r: ReminderApi) => {
       return {
         IncrementId: r.increment_id,
         Content: r.content,
@@ -147,71 +160,4 @@ const ToggleIsCompleted = async (reminder: Reminder) => {
     errorMsg.value = updatedReminder.msg;
   }
 };
-
-// export default defineComponent({
-//   // async mounted() {
-//   //   this.token = await getAccessTokenSilently();
-//   //   const response = await fetch("http://localhost:3000/reminders/byEmail/alexbarke002@outlook.com", {
-//   //     method: "GET",
-//   //     headers: {
-//   //       Authorization: "Bearer " + this.token,
-//   //     },
-//   //   });
-//   //   const reminders = await response.json();
-//   //   this.reminders = reminders;
-//   // },
-//   setup() {
-//     const { user, getAccessTokenSilently } = useAuth0();
-
-//     return {
-//       createReminder: async () => {
-//         const token = await getAccessTokenSilently();
-//         const response = await fetch("http://localhost:3000/reminders/create", {
-//           method: "POST",
-//           headers: {
-//             "Content-type": "application/json; charset=utf-8",
-//             Authorization: "Bearer " + token,
-//           },
-//           body: JSON.stringify({
-//             content: "Walk the dog",
-//             email: user.value.email,
-//             dueDate: DateTime.utc(2022, 10, 30, 12, 30).toJSDate(),
-//           }),
-//         });
-//         console.log(await response.json());
-//       },
-//       getUsers: async () => {
-//         const token = await getAccessTokenSilently();
-//         const response = await fetch("http://localhost:3000/users", {
-//           method: "GET",
-//           headers: {
-//             Authorization: "Bearer " + token,
-//           },
-//         });
-//         console.log(await response.json());
-//       },
-//       hi: async () => {
-//         const token = await getAccessTokenSilently();
-//         const response = await fetch("http://localhost:3000/reminders", {
-//           method: "GET",
-//           headers: {
-//             Authorization: "Bearer " + token,
-//           },
-//         });
-//         const res = await response.json();
-//         console.log(res);
-//       },
-//       getReminders: async () => {
-//         const token = await getAccessTokenSilently();
-//         const response = await fetch("http://localhost:3000/reminders/byEmail/alexbarke002@outlook.com", {
-//           method: "GET",
-//           headers: {
-//             Authorization: "Bearer " + token,
-//           },
-//         });
-//         console.log(await response.json());
-//       },
-//     };
-//   },
-// });
 </script>
