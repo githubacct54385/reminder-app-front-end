@@ -30,6 +30,11 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "reminders" */ "../views/RemindersView.vue"),
     beforeEnter: authGuard,
   },
+  {
+    path: "/my-account",
+    name: "My Account",
+    component: () => import(/* webpackChunkName: "myAccount" */ "../views/MyAccountView.vue"),
+  },
 ];
 
 const router = createRouter({

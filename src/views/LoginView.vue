@@ -1,8 +1,6 @@
 <template>
   <div class="home">
-    <button v-if="isAuthenticated" @click="doSomethingWithToken">call api</button>
-    <button v-if="isAuthenticated" @click="logout">Logout</button>
-    <button v-else @click="login">Log in</button>
+    <button class="rounded text-white bg-blue-600 p-3" @click="login">Log in</button>
   </div>
 </template>
 
@@ -16,7 +14,9 @@ export default defineComponent({
 
     return {
       login: () => {
-        loginWithRedirect();
+        loginWithRedirect({
+          redirect_uri: "http://localhost:8080/#/my-account",
+        });
       },
       logout: () => {
         logout();
