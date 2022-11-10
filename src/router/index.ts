@@ -35,6 +35,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "My Account",
     component: () => import(/* webpackChunkName: "myAccount" */ "../views/MyAccountView.vue"),
   },
+  {
+    path: "/add-reminder",
+    name: "Add Reminder",
+    component: () => import(/* webpackChunkName: "myAccount" */ "../views/AddReminderView.vue"),
+  },
 ];
 
 const router = createRouter({

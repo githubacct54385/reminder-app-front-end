@@ -6,12 +6,11 @@
         <h3 class="text-gray-400 text-sm">Manage your existing reminders</h3>
       </div>
       <div class="flex place-items-end">
-        <button
-          @click="CreateReminder"
+        <router-link
           class="py-3 px-4 bg-blue-700 rounded-lg text-white hover:bg-blue-900 shadow-md duration-200"
+          to="/add-reminder"
+          >Create New Reminder</router-link
         >
-          Create New Reminder
-        </button>
       </div>
     </div>
   </div>
@@ -88,7 +87,7 @@ interface ReminderApi {
 }
 /* eslint-enable */
 
-const { getAccessTokenSilently, user } = useAuth0();
+const { getAccessTokenSilently } = useAuth0();
 
 const reminders = ref<Reminder[]>([]);
 const errorMsg = ref<string>("");
@@ -104,7 +103,7 @@ onMounted(async () => {
   });
   const remindersRes = await response.json();
   if (remindersRes.success) {
-    reminders.value = remindersRes.reminders.map((r: ReminderApi) => {
+    reminders.value = remindersRes.data.map((r: ReminderApi) => {
       return {
         IncrementId: r.increment_id,
         Content: r.content,
@@ -118,22 +117,6 @@ onMounted(async () => {
     errorMsg.value = remindersRes.msg;
   }
 });
-
-const CreateReminder = async () => {
-  const token = await getAccessTokenSilently();
-  await fetch("http://localhost:3000/reminders/create", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json; charset=utf-8",
-      Authorization: "Bearer " + token,
-    },
-    body: JSON.stringify({
-      content: "Walk the dog",
-      email: user.value.email,
-      dueDate: DateTime.utc(2022, 11, 9, 8, 55).toJSDate(),
-    }),
-  });
-};
 
 const ToggleIsCompleted = async (reminder: Reminder) => {
   const token = await getAccessTokenSilently();
