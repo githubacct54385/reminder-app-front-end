@@ -4,9 +4,9 @@ import ResponseModel from "@/models/ResponseModel";
 
 export type DueDateOption = "none" | "5m" | "10m" | "15m" | "30m" | "1h" | "2h" | "1d" | "2d" | "1w";
 
-const CREATE_REMINDER_ENDPOINT = "http://localhost:3000/reminders/create";
-const TOGGLE_REMINDER_ENDPOINT = "http://localhost:3000/reminders/toggleIsCompleted";
-const DELETE_REMINDER_ENDPOINT = "http://localhost:3000/reminders/";
+const CREATE_REMINDER_ENDPOINT = `${process.env.VUE_APP_HOSTNAME}/reminders/create`;
+const TOGGLE_REMINDER_ENDPOINT = `${process.env.VUE_APP_HOSTNAME}/reminders/toggleIsCompleted`;
+const DELETE_REMINDER_ENDPOINT = `${process.env.VUE_APP_HOSTNAME}/reminders/`;
 
 export const CreateReminder = async (
   token: string,
@@ -54,7 +54,7 @@ export const DeleteReminder = async (token: string, reminder: ReminderViewModel)
 };
 
 export const GetRemindersByEmail = async (token: string, email: string) => {
-  const response = await fetch(`http://localhost:3000/reminders/byEmail/${email}`, {
+  const response = await fetch(`${process.env.VUE_APP_HOSTNAME}/reminders/byEmail/${email}`, {
     method: "GET",
     headers: GetHeaders(token),
   });

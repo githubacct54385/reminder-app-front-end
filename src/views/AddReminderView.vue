@@ -90,15 +90,19 @@ const dueDate = ref<Date>(new Date());
 const dueDateTime = ref<string>("");
 const dueDateAlert = ref<DueDateOption>("none");
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleContentChanged = (e: any) => {
   content.value = e.target.value;
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleDueDateChanged = (e: any) => {
   dueDate.value = e.target.value;
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleDueDateTimeChanged = (e: any) => {
   dueDateTime.value = e.target.value;
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleDueDateAlertChanged = (e: any) => {
   dueDateAlert.value = e.target.value;
 };
