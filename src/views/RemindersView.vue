@@ -15,10 +15,10 @@
     </div>
   </div>
   <div
-    v-bind:key="reminder.Id"
+    v-bind:key="reminder.id"
     v-for="reminder in reminders"
     class="flex justify-between w-3/4 rounded-lg my-3 px-2 py-2 mx-auto bg-blue-200"
-    :class="{ 'bg-green-200': reminder.IsCompleted }"
+    :class="{ 'bg-green-200': reminder.isCompleted }"
   >
     <div class="flex gap-2">
       <svg
@@ -28,7 +28,7 @@
         stroke-width="1.5"
         stroke="currentColor"
         class="w-6 h-6 text-blue-600"
-        :class="{ 'text-green-600': reminder.IsCompleted }"
+        :class="{ 'text-green-600': reminder.isCompleted }"
       >
         <path
           stroke-linecap="round"
@@ -37,12 +37,12 @@
         />
       </svg>
 
-      <div class="font-bold">{{ reminder.Content }}</div>
+      <div class="font-bold">{{ reminder.content }}</div>
     </div>
     <div class="flex gap-2">
-      <div class="text-sm text-blue-600">{{ reminder.DueDateUtc }}</div>
+      <div class="text-sm text-blue-600">{{ reminder.dueDateUtc }}</div>
       <svg
-        @click="ToggleIsCompleted(reminder)"
+        @click="ToggleReminder(reminder)"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -56,6 +56,21 @@
           d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
+      <svg
+        @click="HandleDelete(reminder)"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 cursor-pointer hover:text-slate-400"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+        />
+      </svg>
     </div>
   </div>
 </template>
@@ -64,53 +79,35 @@
 import { onMounted, ref } from "vue";
 import { useAuth0 } from "@auth0/auth0-vue";
 import { DateTime } from "luxon";
+import ReminderServerModel from "@/models/ReminderServerModel";
+import ReminderViewModel from "@/models/ReminderViewModel";
+import { DeleteReminder, DueDateOption, GetRemindersByEmail, ToggleIsCompleted } from "@/Ajax/ReminderAjax";
 
-interface Reminder {
-  IncrementId: string;
-  Id: string;
-  CreatorEmail: string;
-  CreatorName: string;
-  DueDateUtc: string;
-  Content: string;
-  IsCompleted: boolean;
-}
+const { getAccessTokenSilently, user } = useAuth0();
 
-/* eslint-disable */
-interface ReminderApi {
-  increment_id: string;
-  id: string;
-  creator_email: string;
-  creator_name: string;
-  due_date_utc: string;
-  content: string;
-  is_completed: boolean;
-}
-/* eslint-enable */
-
-const { getAccessTokenSilently } = useAuth0();
-
-const reminders = ref<Reminder[]>([]);
+const reminders = ref<ReminderViewModel[]>([]);
 const errorMsg = ref<string>("");
 
 onMounted(async () => {
   errorMsg.value = "";
   const token = await getAccessTokenSilently();
-  const response = await fetch("http://localhost:3000/reminders/byEmail/alexbarke002@outlook.com", {
-    method: "GET",
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
-  const remindersRes = await response.json();
+  if (!user?.value?.email) {
+    errorMsg.value = "User email cannot be empty.";
+    return;
+  }
+  const remindersRes = await GetRemindersByEmail(token, user.value.email);
   if (remindersRes.success) {
-    reminders.value = remindersRes.data.map((r: ReminderApi) => {
+    reminders.value = remindersRes.data.map((r: ReminderServerModel): ReminderViewModel => {
       return {
-        IncrementId: r.increment_id,
-        Content: r.content,
-        CreatorEmail: r.creator_email,
-        DueDateUtc: `Due ${DateTime.fromISO(r.due_date_utc).toRelativeCalendar()}`,
-        Id: r.id,
-        IsCompleted: r.is_completed,
+        incrementId: r.increment_id,
+        content: r.content,
+        creatorEmail: r.creator_email,
+        dueDateUtc: `Due ${DateTime.fromISO(r.due_date_utc as string).toRelativeCalendar()}`,
+        id: r.id,
+        isCompleted: r.is_completed,
+        isDeleted: r.is_deleted,
+        email: r.creator_email,
+        dueDateAlert: r.due_date_alert as DueDateOption,
       };
     });
   } else {
@@ -118,29 +115,30 @@ onMounted(async () => {
   }
 });
 
-const ToggleIsCompleted = async (reminder: Reminder) => {
+const ToggleReminder = async (reminder: ReminderViewModel) => {
   const token = await getAccessTokenSilently();
-  const updatedReminderRes = await fetch("http://localhost:3000/reminders/toggleIsCompleted", {
-    method: "PATCH",
-    headers: {
-      "Content-type": "application/json; charset=utf-8",
-      Authorization: "Bearer " + token,
-    },
-    body: JSON.stringify({
-      id: reminder.Id,
-      isCompleted: reminder.IsCompleted,
-    }),
-  });
-  const updatedReminder = await updatedReminderRes.json();
+  const updatedReminder = await ToggleIsCompleted(token, reminder);
   if (updatedReminder.success) {
-    reminders.value = reminders.value.map((r) => {
-      if (r.Id === reminder.Id) {
-        return { ...r, IsCompleted: !r.IsCompleted };
+    reminders.value = reminders.value.map((r): ReminderViewModel => {
+      if (r.id === reminder.id) {
+        return { ...r, isCompleted: !r.isCompleted };
       }
       return r;
     });
   } else {
     errorMsg.value = updatedReminder.msg;
+  }
+};
+
+const HandleDelete = async (reminder: ReminderViewModel) => {
+  const token = await getAccessTokenSilently();
+  const deletedReminder = await DeleteReminder(token, reminder);
+  if (deletedReminder.success) {
+    reminders.value = reminders.value.filter((r) => {
+      return r.id !== reminder.id;
+    });
+  } else {
+    errorMsg.value = deletedReminder.msg;
   }
 };
 </script>

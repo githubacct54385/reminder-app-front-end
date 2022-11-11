@@ -3,9 +3,11 @@ import { DueDateOption } from "@/Ajax/ReminderAjax";
 export default interface ReminderViewModel {
   content: string;
   email: string;
-  dueDateUtc: Date;
+  dueDateUtc: Date | string;
   dueDateAlert: DueDateOption;
-  isCompleted: boolean;
   id: string;
   creatorEmail: string;
+  isCompleted: boolean;
+  isDeleted: boolean;
+  incrementId: string;
 }

@@ -136,7 +136,7 @@ const Create = async (e: any) => {
   }
   if (ii.diff(DateTime.now()).milliseconds < 0) {
     error.value = "Due Date cannot be in the past.";
-    // return;
+    return;
   }
 
   const reminder = await CreateReminder(token, content.value, user.value.email, ll, dueDateAlert.value);

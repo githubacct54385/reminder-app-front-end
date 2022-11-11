@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 export default interface ReminderServerModel {
   id: string;
+  increment_id: string;
   creator_name?: string | null;
   creator_email: string;
   created_at_utc: Date | string;
@@ -8,5 +9,6 @@ export default interface ReminderServerModel {
   due_date_utc: Date | string;
   due_date_alert?: string;
   content: string;
-  is_completed?: boolean;
+  is_completed: boolean;
+  is_deleted: boolean;
 }
