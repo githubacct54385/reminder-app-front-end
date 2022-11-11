@@ -14,9 +14,7 @@ export default defineComponent({
 
     return {
       login: () => {
-        loginWithRedirect({
-          redirect_uri: `${process.env.VUE_APP_REDIRECT_AUTH0_HOSTNAME}/#/my-account`,
-        });
+        loginWithRedirect();
       },
       logout: () => {
         logout();
