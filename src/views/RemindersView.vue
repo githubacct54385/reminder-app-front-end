@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-evenly w-3/4 rounded-xl mx-auto">
+  <div class="flex justify-evenly w-full md:w-3/4 lg:w-1/2 rounded-xl mx-auto">
     <div class="flex p-6 w-full justify-between">
       <div class="flex flex-col items-start">
         <h1 class="font-bold">Reminders</h1>
@@ -9,7 +9,7 @@
         <router-link
           class="py-3 px-4 bg-blue-700 rounded-lg text-white hover:bg-blue-900 shadow-md duration-200"
           to="/add-reminder"
-          >Create New Reminder</router-link
+          >Create</router-link
         >
       </div>
     </div>
@@ -17,30 +17,33 @@
   <div
     v-bind:key="reminder.id"
     v-for="reminder in reminders"
-    class="flex justify-between w-3/4 rounded-lg my-3 px-2 py-2 mx-auto bg-blue-200"
+    class="flex justify-between w-11/12 md:w-3/4 lg:w-1/2 rounded-lg my-3 px-2 py-2 mx-auto bg-blue-200"
     :class="{ 'bg-green-200': reminder.isCompleted }"
   >
-    <div class="flex gap-2">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="w-6 h-6 text-blue-600"
-        :class="{ 'text-green-600': reminder.isCompleted }"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-        />
-      </svg>
-
-      <div class="font-bold">{{ reminder.content }}</div>
+    <div class="flex flex-col">
+      <div class="flex gap-1">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-6 h-6 text-blue-600"
+          :class="{ 'text-green-600': reminder.isCompleted }"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+          />
+        </svg>
+        <div class="font-bold">{{ reminder.content }}</div>
+      </div>
+      <div class="flex text-sm text-blue-600">
+        {{ reminder.dueDateUtc }}
+      </div>
     </div>
-    <div class="flex gap-2">
-      <div class="text-sm text-blue-600">{{ reminder.dueDateUtc }}</div>
+    <div class="flex">
       <svg
         @click="ToggleReminder(reminder)"
         xmlns="http://www.w3.org/2000/svg"

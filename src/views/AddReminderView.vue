@@ -70,8 +70,8 @@
     >
       Create
     </button>
-    <div>
-      <span v-if="error.length > 0">{{ error }}</span>
+    <div v-if="error.length > 0">
+      {{ error }}
     </div>
   </div>
 </template>
@@ -107,6 +107,7 @@ const handleDueDateAlertChanged = (e: any) => {
   dueDateAlert.value = e.target.value;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Create = async (e: any) => {
   e.preventDefault();
   error.value = "";
