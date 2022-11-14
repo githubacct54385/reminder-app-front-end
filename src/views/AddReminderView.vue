@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-col justify-evenly w-4/5 md:w-3/4 lg:w-1/2 rounded-xl mx-auto">
+    <GoBackButton route="/reminders" />
     <div class="flex">
       <h1 class="text-3xl">Create Reminder</h1>
     </div>
@@ -82,6 +83,7 @@ import { useAuth0 } from "@auth0/auth0-vue";
 import { DateTime } from "luxon";
 import { CreateReminder, DueDateOption } from "@/Ajax/ReminderAjax";
 import router from "@/router";
+import GoBackButton from "@/components/GoBackButton.vue";
 
 const { getAccessTokenSilently, user } = useAuth0();
 const content = ref("");
