@@ -105,7 +105,9 @@ onMounted(async () => {
         incrementId: r.increment_id,
         content: r.content,
         creatorEmail: r.creator_email,
-        dueDateUtc: `Due ${DateTime.fromISO(r.due_date_utc as string).toRelativeCalendar()}`,
+        dueDateUtc: `Due ${DateTime.fromISO(r.due_date_utc as string).toRelativeCalendar()} or ${DateTime.fromISO(
+          r.due_date_utc as string
+        ).toLocaleString(DateTime.DATETIME_MED)}`,
         id: r.id,
         isCompleted: r.is_completed,
         isDeleted: r.is_deleted,
