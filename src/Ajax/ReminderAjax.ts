@@ -1,12 +1,15 @@
 import ReminderServerModel from "@/models/ReminderServerModel";
 import ReminderViewModel from "@/models/ReminderViewModel";
 import ResponseModel from "@/models/ResponseModel";
+import { DateTime } from "luxon";
 
 export type DueDateOption = "none" | "5m" | "10m" | "15m" | "30m" | "1h" | "2h" | "1d" | "2d" | "1w";
 
 const CREATE_REMINDER_ENDPOINT = `${process.env.VUE_APP_API_ENDPOINT}/reminders/create`;
 const TOGGLE_REMINDER_ENDPOINT = `${process.env.VUE_APP_API_ENDPOINT}/reminders/toggleIsCompleted`;
 const DELETE_REMINDER_ENDPOINT = `${process.env.VUE_APP_API_ENDPOINT}/reminders/`;
+
+const utcOffsetHours = DateTime.local().offset / 60;
 
 export const CreateReminder = async (
   token: string,
@@ -23,6 +26,7 @@ export const CreateReminder = async (
       email,
       dueDateUtc: dueDate,
       dueDateAlert,
+      utcOffset: utcOffsetHours,
     }),
   });
   return reminder.json();
