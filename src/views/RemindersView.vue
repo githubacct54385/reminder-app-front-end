@@ -2,7 +2,7 @@
   <div class="flex justify-evenly w-full md:w-3/4 lg:w-1/2 rounded-xl mx-auto">
     <div class="flex p-6 w-full justify-between">
       <div class="flex flex-col items-start">
-        <h1 class="font-bold">Reminders</h1>
+        <h1 class="font-bold">Reminders (lol I am pushing to master)</h1>
         <h3 class="text-gray-400 text-sm">Manage your existing reminders</h3>
       </div>
       <div class="flex place-items-end">
