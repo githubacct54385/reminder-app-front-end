@@ -3,9 +3,7 @@
     <router-link to="/">Home</router-link>
     <router-link to="/about">About</router-link>
     <router-link v-if="isAuthenticated" to="/reminders">Reminders</router-link>
-    <button class="font-bold" v-if="isAuthenticated" @click="logoutAction">Logout</button>
-    <router-link v-else to="/login">Login</router-link>
-    <router-link to="/my-account">My Account</router-link>
+    <router-link v-if="isAuthenticated" to="/my-account">My Account</router-link>
   </nav>
   <router-view />
 </template>
