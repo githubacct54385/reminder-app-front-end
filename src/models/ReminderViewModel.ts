@@ -4,6 +4,7 @@ export default interface ReminderViewModel {
   content: string;
   email: string;
   dueDateUtc: Date | string;
+  dueDateUtcRelative: string;
   dueDateAlert: DueDateOption;
   id: string;
   creatorEmail: string;
