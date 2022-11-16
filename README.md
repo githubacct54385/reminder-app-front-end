@@ -1,34 +1,15 @@
 # reminder-app-front-end
 
-## Project setup
-```
-yarn install
+# Overview
+This is the front-end of the Reminder App.  It uses Vue + Typescript, Auth0, and TailwindCSS.
+
+# Environment Variables for local development
+Please add a file `.env.development.local` into the root.  Put the api host of your reminder api project there.
+```env
+VUE_APP_API_ENDPOINT=http://localhost:3000
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+# How to run
+`npm install`
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Run your unit tests
-```
-yarn test:unit
-```
-
-### Run your end-to-end tests
-```
-yarn test:e2e
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+`npm run serve`
