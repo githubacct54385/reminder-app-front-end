@@ -15,6 +15,7 @@
     </div>
   </div>
   <div v-if="isLoading">Loading...</div>
+  <div v-if="!isLoading && reminders.length === 0">No reminders</div>
   <div
     v-else
     v-bind:key="reminder.id"
