@@ -46,7 +46,8 @@
     <div class="flex flex-col">
       <div class="flex justify-end gap-1">
         <svg
-          @click="ToggleReminder(reminder)"
+          v-if="!reminder.isDeleted"
+          @click="toggleReminder(reminder)"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -60,8 +61,12 @@
             d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
           />
         </svg>
+        <button @click="handleRestoreReminder(reminder)" class="hover:text-slate-400" v-if="reminder.isDeleted">
+          Undo Delete
+        </button>
         <svg
-          @click="HandleDelete(reminder)"
+          v-if="!reminder.isDeleted"
+          @click="handleDeleteReminder(reminder)"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -89,7 +94,13 @@ import { useAuth0 } from "@auth0/auth0-vue";
 import { DateTime } from "luxon";
 import ReminderServerModel from "@/models/ReminderServerModel";
 import ReminderViewModel from "@/models/ReminderViewModel";
-import { DeleteReminder, DueDateOption, GetRemindersByEmail, ToggleIsCompleted } from "@/Ajax/ReminderAjax";
+import {
+  DeleteReminder,
+  DueDateOption,
+  GetRemindersByEmail,
+  ToggleIsCompleted,
+  RestoreReminder,
+} from "@/Ajax/ReminderAjax";
 
 const { getAccessTokenSilently, user } = useAuth0();
 
@@ -111,7 +122,7 @@ onMounted(async () => {
         content: r.content,
         creatorEmail: r.creator_email,
         dueDateUtc: `Due ${DateTime.fromISO(r.due_date_utc as string).toLocaleString(DateTime.DATETIME_MED)}`,
-        dueDateUtcRelative: `${DateTime.fromISO(r.created_at_utc as string).toRelative()}`,
+        dueDateUtcRelative: `${DateTime.fromISO(r.due_date_utc as string).toRelative()}`,
         id: r.id,
         isCompleted: r.is_completed,
         isDeleted: r.is_deleted,
@@ -124,7 +135,7 @@ onMounted(async () => {
   }
 });
 
-const ToggleReminder = async (reminder: ReminderViewModel) => {
+const toggleReminder = async (reminder: ReminderViewModel) => {
   const token = await getAccessTokenSilently();
   const updatedReminder = await ToggleIsCompleted(token, reminder);
   if (updatedReminder.success) {
@@ -139,15 +150,33 @@ const ToggleReminder = async (reminder: ReminderViewModel) => {
   }
 };
 
-const HandleDelete = async (reminder: ReminderViewModel) => {
+const handleDeleteReminder = async (reminder: ReminderViewModel) => {
   const token = await getAccessTokenSilently();
-  const deletedReminder = await DeleteReminder(token, reminder);
-  if (deletedReminder.success) {
-    reminders.value = reminders.value.filter((r) => {
-      return r.id !== reminder.id;
+  const deletedReminderResponse = await DeleteReminder(token, reminder);
+  if (deletedReminderResponse.success) {
+    reminders.value = reminders.value.map((r) => {
+      if (r.id === reminder.id) {
+        return { ...r, isDeleted: true };
+      }
+      return r;
     });
   } else {
-    errorMsg.value = deletedReminder.msg;
+    errorMsg.value = deletedReminderResponse.msg;
+  }
+};
+
+const handleRestoreReminder = async (reminder: ReminderViewModel) => {
+  const token = await getAccessTokenSilently();
+  const restoredReminderResponse = await RestoreReminder(token, reminder);
+  if (restoredReminderResponse.success) {
+    reminders.value = reminders.value.map((r) => {
+      if (r.id === reminder.id) {
+        return { ...r, isDeleted: false };
+      }
+      return r;
+    });
+  } else {
+    errorMsg.value = restoredReminderResponse.msg;
   }
 };
 </script>

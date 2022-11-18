@@ -8,6 +8,7 @@ export type DueDateOption = "none" | "5m" | "10m" | "15m" | "30m" | "1h" | "2h" 
 const CREATE_REMINDER_ENDPOINT = `${process.env.VUE_APP_API_ENDPOINT}/reminders/create`;
 const TOGGLE_REMINDER_ENDPOINT = `${process.env.VUE_APP_API_ENDPOINT}/reminders/toggleIsCompleted`;
 const DELETE_REMINDER_ENDPOINT = `${process.env.VUE_APP_API_ENDPOINT}/reminders/`;
+const RESTORE_REMINDER_ENDPOINT = `${process.env.VUE_APP_API_ENDPOINT}/reminders/restore`;
 
 const utcOffsetHours = DateTime.local().offset / 60;
 
@@ -54,6 +55,18 @@ export const DeleteReminder = async (token: string, reminder: ReminderViewModel)
     }),
   });
   const toggledReminder = await deletedReminderRes.json();
+  return toggledReminder;
+};
+
+export const RestoreReminder = async (token: string, reminder: ReminderViewModel) => {
+  const restoreReminderRes = await fetch(RESTORE_REMINDER_ENDPOINT, {
+    method: "PATCH",
+    headers: PostPatchHeaders(token),
+    body: JSON.stringify({
+      id: reminder.id,
+    }),
+  });
+  const toggledReminder = await restoreReminderRes.json();
   return toggledReminder;
 };
 
