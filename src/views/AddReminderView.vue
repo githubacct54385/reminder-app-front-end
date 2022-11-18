@@ -65,7 +65,8 @@
       </select>
     </div>
     <button
-      class="py-3 px-4 bg-blue-700 rounded-lg text-white hover:bg-blue-900 shadow-md duration-200"
+      :disabled="isSubmitting"
+      class="py-3 px-4 bg-blue-700 rounded-lg text-white hover:bg-blue-900 shadow-md duration-200 disabled:opacity-25"
       @click="Create"
       type="button"
     >
@@ -91,6 +92,7 @@ const error = ref("");
 const dueDate = ref<Date>(new Date());
 const dueDateTime = ref<string>("");
 const dueDateAlert = ref<DueDateOption>("none");
+const isSubmitting = ref<boolean>(false);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleContentChanged = (e: any) => {
@@ -146,12 +148,14 @@ const Create = async (e: any) => {
     return;
   }
 
+  isSubmitting.value = true;
   const reminder = await CreateReminder(token, content.value, user.value.email, ll, dueDateAlert.value);
   if (reminder.success) {
     // redirect to reminders
     router.push("/reminders");
   } else {
     error.value = reminder.msg;
+    isSubmitting.value = false;
   }
 };
 </script>
