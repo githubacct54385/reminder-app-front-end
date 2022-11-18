@@ -14,7 +14,9 @@
       </div>
     </div>
   </div>
+  <div v-if="isLoading">Loading...</div>
   <div
+    v-else
     v-bind:key="reminder.id"
     v-for="reminder in reminders"
     class="flex justify-between w-11/12 md:w-3/4 lg:w-1/2 rounded-lg my-3 px-2 py-2 mx-auto bg-blue-200"
@@ -106,6 +108,7 @@ const { getAccessTokenSilently, user } = useAuth0();
 
 const reminders = ref<ReminderViewModel[]>([]);
 const errorMsg = ref<string>("");
+const isLoading = ref<boolean>(true);
 
 onMounted(async () => {
   errorMsg.value = "";
@@ -133,6 +136,7 @@ onMounted(async () => {
   } else {
     errorMsg.value = remindersRes.msg;
   }
+  isLoading.value = false;
 });
 
 const toggleReminder = async (reminder: ReminderViewModel) => {
